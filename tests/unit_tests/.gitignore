@@ -1,2 +1,4 @@
 /__init__.pyc
 /formatter_test.pyc
+
+*.txt
