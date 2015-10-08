@@ -35,7 +35,7 @@ class CoGePyFormatter(Formatter):
         field_name = list()
         actual_char = None
         result = list()
-        other_internal_template = 0 #keep track of the internal templates conteined into the current internal template
+        other_internal_template = 0 #keep track of the internal templates contained into the current internal template
         
         i=0
         while i< len(formatting_string):
@@ -150,7 +150,7 @@ class CoGePyFormatter(Formatter):
             #$name = Input parameters -> kwargs[name]
             #super...super.attr_name = process the super in order to find the arg index 
             #                pointing to the rmdoc in which find the attribute named attr_name
-            #"hello world" = a constant which need to be returned without identically except for the ""
+            #"hello world" = a constant which need to be returned identically except for the ""
             if evaluate:
                 #We are in the right hand of the expression 
                 if utils.is_key_constants(expression):
@@ -164,8 +164,15 @@ class CoGePyFormatter(Formatter):
                     #the obj is an input variable
                     return self.get_field(expression, args, kwargs)[0]
                 else:
-                    rmdoc = utils.find_top_level_rmdoc(args)
-                    return utils.get_attribute(rmdoc, expression)
+                    #first of all we search inside the object of the current template.
+                    obj = self.get_field(expression, args, kwargs)[0]
+                    if obj:
+                        return obj
+                    else:
+                        #Otherwise Search inside the top-level rmdoc with a deep search
+                        #TODO Understand if it is really useful..
+                        rmdoc = utils.find_top_level_rmdoc(args)
+                        return utils.get_attribute(rmdoc, expression)
         else:
             sub_expr = expression[start_sub_expr+1:end_sub_expr].strip()
             if utils.expr_is_search_expression(sub_expr):
